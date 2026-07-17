@@ -1,0 +1,10 @@
+/* 1. Sol üstteki 9 kareli uygulama menüsünü gizler */
+.o_navbar_apps_menu {
+    display: none !important;
+}
+
+/* 2. Sağ üstteki gereksiz tüm ikonları (Mesaj, Saat vb.) kökten gizler */
+/* Sadece kullanıcı profilini (.o_user_menu) ve geliştirici mod böceğini (.o_debug_manager) ekranda bırakır */
+.o_menu_systray > *:not(.o_user_menu):not(.o_debug_manager) {
+    display: none !important;
+}

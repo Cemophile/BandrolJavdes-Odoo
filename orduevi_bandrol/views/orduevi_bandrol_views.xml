@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_orduevi_bandrol_tree" model="ir.ui.view">
+        <field name="name">orduevi.bandrol.list</field>
+        <field name="model">orduevi.bandrol</field>
+        <field name="arch" type="xml">
+            <tree string="Bandrol Tipleri" editable="bottom" export_xlsx="0" import="0">
+                <field name="bandrol_id"/>
+                <field name="yil" widget="integer" options="{'format': 0, 'useGrouping': False, 'enable_formatting': False}"/>
+                <field name="statu"/>
+                <field name="kapsam"/>
+                <field name="ucret"/>
+                <field name="active" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_orduevi_bandrol_form" model="ir.ui.view">
+        <field name="name">orduevi.bandrol.form</field>
+        <field name="model">orduevi.bandrol</field>
+        <field name="arch" type="xml">
+            <form string="Bandrol Tipi">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="bandrol_id"/>
+                            <field name="yil" widget="integer" options="{'format': 0, 'useGrouping': False, 'enable_formatting': False}"/>
+                        </group>
+                        <group>
+                            <field name="statu"/>
+                            <field name="kapsam"/>
+                            <field name="ucret"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_orduevi_bandrol_search" model="ir.ui.view">
+        <field name="name">orduevi.bandrol.search</field>
+        <field name="model">orduevi.bandrol</field>
+        <field name="arch" type="xml">
+            <search string="Bandrol Ara">
+                <field name="bandrol_id"/>
+                <field name="yil"/>
+                <field name="statu"/>
+                <filter string="Bu Yıl" name="bu_yil"
+                        domain="[('yil', '=', context_today().year)]"/>
+                <group expand="0" string="Grupla">
+                    <filter string="Yıl" name="group_yil" context="{'group_by': 'yil'}"/>
+                    <filter string="Statü" name="group_statu" context="{'group_by': 'statu'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_orduevi_bandrol" model="ir.actions.act_window">
+        <field name="name">Ayarlar - Bandrol Tanımları ve Fiyatları</field>
+        <field name="res_model">orduevi.bandrol</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smart_action">
+                Yeni bir bandrol tipi tanımlayın (Örn: 2026-SUBAY).
+            </p>
+        </field>
+    </record>
+
+</odoo>

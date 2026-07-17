@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="page_sorgulama" name="Bandrol Sorgulama">
+        <t t-call="website.layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <div class="container mt-5 mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card rounded-0 border-dark">
+                            <div class="card-header bg-dark text-white text-center py-3 rounded-0 border-bottom border-dark">
+                                <h5 class="mb-0 text-uppercase fw-bold">T.C. Milli Savunma Bakanlığı</h5>
+                                <small class="text-uppercase">Orduevi Bandrol Sistemi</small>
+                            </div>
+                            <div class="card-body p-4">
+                                <p class="text-center mb-4 fw-bold border-bottom pb-2">Personel Kimlik Doğrulama</p>
+
+                                <t t-if="error">
+                                    <div class="alert alert-danger rounded-0" role="alert">
+                                        <t t-esc="error"/>
+                                    </div>
+                                </t>
+
+                                <form action="/bandrol/islem" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <!-- tc Kimlik Numarası Alanı -->
+                                    <div class="mb-3">
+                                        <label for="tc_kimlik" class="form-label fw-bold small text-uppercase">T.C. Kimlik Numarası</label>
+                                        <div class="position-relative">
+                                            <span id="tc_mask" class="position-absolute text-muted" style="left: 13px; top: 7px; pointer-events: none; font-family: monospace; font-size: 1.1rem; letter-spacing: 2px; white-space: pre;">___________</span>
+
+                                            <input type="text" class="form-control rounded-0 border-dark" id="tc_kimlik" name="tc_kimlik" required="required" maxlength="11" pattern="\d{11}"
+                                                   style="background-color: transparent; position: relative; z-index: 2; font-family: monospace; font-size: 1.1rem; letter-spacing: 2px;"
+                                                   oninput="document.getElementById('tc_mask').innerText = this.value.replace(/./g, ' ') + '___________'.substring(this.value.length);"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sicil Numarası -->
+                                    <div class="mb-4">
+                                        <label for="sicil_no" class="form-label fw-bold small text-uppercase">Sicil Numarası</label>
+                                        <input type="text" class="form-control rounded-0 border-dark" id="sicil_no" name="sicil_no" required="required" pattern="\d{4}-[a-zA-ZçğıöşüÇĞİÖŞÜ]+\.\d+" title="Lütfen istenen formata uyun. Örnek: 2025-İs.25"/>
+                                    </div>
+                                    <button type="submit" class="btn btn-dark w-100 rounded-0 text-uppercase fw-bold">Sorgula</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="page_odeme" name="Bandrol Ödeme Onayı">
+        <t t-call="website.layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <div class="container mt-5 mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card rounded-0 border-dark">
+                            <div class="card-header bg-dark text-white text-center py-3 rounded-0 border-bottom border-dark">
+                                <h5 class="mb-0 text-uppercase fw-bold">Doğrulama Sonucu</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <p class="text-center mb-4 border-bottom pb-3">
+                                    TCKN: <strong class="ms-1"><t t-esc="tc_kimlik[:3]"/>*****<t t-esc="tc_kimlik[-3:]"/></strong><br/>
+                                    <span class="small text-muted">MSB kayıtları ile eşleşme sağlanmıştır.</span>
+                                </p>
+
+                                <table class="table table-bordered table-sm rounded-0 border-dark mb-4">
+                                    <tbody>
+                                        <tr>
+                                            <td class="bg-light fw-bold w-50">Bandrol Tipi</td>
+                                            <td><t t-esc="bandrol_adi"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-light fw-bold">Statü</td>
+                                            <td class="text-uppercase"><t t-esc="statu_metni"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-light fw-bold">Kapsam</td>
+                                            <td class="text-uppercase"><t t-esc="kapsam"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-dark text-white fw-bold text-uppercase">Toplam Tutar</td>
+                                            <td class="bg-dark text-white fw-bold"><t t-esc="fiyat"/> TL</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="mb-4">
+                                    <t t-out="checkout_form"/>
+                                    <div id="iyzipay-checkout-form" class="responsive"></div>
+                                </div>
+
+                                <button class="btn btn-dark w-100 rounded-0 text-uppercase fw-bold" disabled="1">Ödeme İşlemine Geç</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <template id="page_dekont" name="Bandrol İşlem Dekontu">
+        <t t-call="website.layout">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+
+            <div class="container mt-5 mb-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card rounded-0 border-success">
+                            <div class="card-header bg-success text-white text-center py-3 rounded-0 border-bottom border-success">
+                                <h5 class="mb-0 text-uppercase fw-bold"><i class="fa fa-check-circle me-2"/> İşlem Başarılı</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <p class="text-center mb-4 text-muted">Bandrol ödemeniz başarıyla tahsil edilmiş ve sistemlerimize işlenmiştir.</p>
+
+                                <table class="table table-bordered table-sm rounded-0 border-dark mb-4">
+                                    <tbody>
+                                        <tr>
+                                            <td class="bg-light fw-bold">Bandrol Tipi</td>
+                                            <td><t t-esc="islem.bandrol_id.bandrol_id"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-light fw-bold">Referans No</td>
+                                            <td><t t-esc="islem.pos_siparis_no"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-light fw-bold">İşlem Tarihi</td>
+                                            <td><t t-esc="islem.tarih.strftime('%d.%m.%Y %H:%M')"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="bg-dark text-white fw-bold text-uppercase">Tahsil Edilen</td>
+                                            <td class="bg-dark text-white fw-bold"><t t-esc="islem.tutar"/> TL</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="text-center mt-4">
+                                    <button onclick="window.print()" class="btn btn-outline-dark rounded-0 w-100 mb-2 fw-bold text-uppercase">
+                                        <i class="fa fa-print me-2"/> Dekontu Yazdır
+                                    </button>
+                                    <a href="/bandrol" class="btn btn-dark rounded-0 w-100 fw-bold text-uppercase">Yeni Sorgulama</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
