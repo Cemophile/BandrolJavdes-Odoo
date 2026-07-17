@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_orduevi_transaction_yonetici,orduevi.transaction.yonetici,model_orduevi_transaction,group_orduevi_yonetici,1,1,0,0
+access_orduevi_bandrol_yonetici,orduevi.bandrol.yonetici,model_orduevi_bandrol,group_orduevi_yonetici,1,0,0,0
+access_orduevi_transaction_admin,orduevi.transaction.admin,model_orduevi_transaction,group_orduevi_admin,1,1,1,1
+access_orduevi_bandrol_admin,orduevi.bandrol.admin,model_orduevi_bandrol,group_orduevi_admin,1,1,1,1

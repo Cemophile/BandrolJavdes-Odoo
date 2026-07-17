@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Liste Görünümü -->
+    <record id="view_orduevi_bandrol_list" model="ir.ui.view">
+        <field name="name">orduevi.bandrol.list</field>
+        <field name="model">orduevi.bandrol</field>
+        <field name="arch" type="xml">
+            <tree string="Bandrol Tipleri">
+                <field name="bandrol_id"/>
+                <field name="yil"/>
+                <field name="statu"/>
+                <field name="kapsam"/>
+                <field name="ucret"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form -->
+    <record id="view_orduevi_bandrol_form" model="ir.ui.view">
+        <field name="name">orduevi.bandrol.form</field>
+        <field name="model">orduevi.bandrol</field>
+        <field name="arch" type="xml">
+            <form string="Bandrol Tipi">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="bandrol_id"/>
+                            <field name="yil"/>
+                            <field name="statu"/>
+                        </group>
+                        <group>
+                            <field name="kapsam"/>
+                            <field name="ucret"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_orduevi_bandrol" model="ir.actions.act_window">
+        <field name="name">Bandrol Kataloğu</field>
+        <field name="res_model">orduevi.bandrol</field>
+        <field name="view_mode">form,tree</field>
+    </record>
+
+    <!-- Ana ve Alt Menü -->
+    <menuitem id="menu_orduevi_root" name="MSB Bandrol" sequence="10"/>
+    <menuitem id="menu_orduevi_bandrol" name="Bandrol Tipleri" parent="menu_orduevi_root" action="action_orduevi_bandrol" sequence="10"/>
+</odoo>

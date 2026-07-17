@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Yetki Kategorisi -->
+        <record model="ir.module.category" id="module_category_orduevi">
+            <field name="name">Orduevi Bandrol</field>
+            <field name="description">Orduevi Bandrol Sistemi Kullanıcı Yetkileri</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Orduevi Yöneticisi (Kayıt Silemez) -->
+        <record id="group_orduevi_yonetici" model="res.groups">
+            <field name="name">Orduevi Yöneticisi (Kayıt Girebilir, Silemez)</field>
+            <field name="category_id" ref="module_category_orduevi"/>
+        </record>
+
+        <!-- Sistem Admini (Tam Yetkili - Silebilir) -->
+        <record id="group_orduevi_admin" model="res.groups">
+            <field name="name">Sistem Yöneticisi (Tam Yetkili)</field>
+            <field name="category_id" ref="module_category_orduevi"/>
+            <!-- Admin Orduevi Yöneticisinin sahip olduğu tüm yetkileri otomatik miras alır -->
+            <field name="implied_ids" eval="[(4, ref('group_orduevi_yonetici'))]"/>
+        </record>
+    </data>
+</odoo>

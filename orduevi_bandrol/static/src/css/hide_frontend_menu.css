@@ -1,0 +1,9 @@
+/* Yönetici giriş yaptığında sarkan siyah Odoo editör barını tamamen gizler */
+#oe_main_menu_navbar {
+    display: none !important;
+}
+
+/* Odoo'nun o siyah bar için sayfanın üstünden bıraktığı gereksiz boşluğu sıfırlar */
+body.o_connected_user {
+    padding-top: 0 !important;
+}

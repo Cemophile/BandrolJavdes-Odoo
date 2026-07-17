@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- İşlem Geçmişi Listesi -->
+        <record id="view_orduevi_transaction_list" model="ir.ui.view">
+            <field name="name">orduevi.transaction.list</field>
+            <field name="model">orduevi.transaction</field>
+            <field name="arch" type="xml">
+                <tree string="İşlem Geçmişi" create="0" decoration-success="durum == 'basarili'" decoration-danger="durum == 'hata'" default_order="tarih desc">
+                    <field name="pos_siparis_no" decoration-bf="1"/>
+
+                    <!-- Kullanıcı Hash yeri-->
+                    <field name="kullanici_hash" column_invisible="1"/>
+
+                    <field name="bandrol_id"/>
+                    <field name="paket_suresi"/>
+                    <field name="tutar" sum="Toplam Ciro" decoration-info="1"/>
+                    <field name="tarih" widget="date"/>
+                    <field name="durum" widget="badge" decoration-success="durum == 'basarili'" decoration-danger="durum == 'hata'"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- İşlem Geçmişi Formu -->
+        <record id="view_orduevi_transaction_form" model="ir.ui.view">
+            <field name="name">orduevi.transaction.form</field>
+            <field name="model">orduevi.transaction</field>
+            <field name="arch" type="xml">
+                <form string="Bandrol İşlemi" create="0">
+                    <header>
+                        <field name="durum" widget="statusbar" statusbar_visible="hata,basarili"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Kilitli (Salt Okunur)" invisible="not is_locked"/>
+                        <group>
+                            <group>
+                                <field name="pos_siparis_no" readonly="is_locked"/>
+                                <field name="kullanici_hash" readonly="is_locked"/>
+                                <field name="bandrol_id" readonly="is_locked"/>
+                                <field name="paket_suresi" readonly="is_locked"/>
+                            </group>
+                            <group>
+                                <field name="pos_ref_kodu" readonly="is_locked"/>
+                                <field name="tutar"/>
+                                <field name="harici_islem_token" readonly="is_locked"/>
+                                <field name="tarih" readonly="1"/>
+                                <field name="is_locked" invisible="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- İşlem geçmişi arama -->
+        <record id="view_orduevi_transaction_search" model="ir.ui.view">
+            <field name="name">orduevi.transaction.search</field>
+            <field name="model">orduevi.transaction</field>
+            <field name="arch" type="xml">
+                <search string="İşlem Ara">
+                    <field name="pos_siparis_no" string="Sipariş No veya Referans" filter_domain="['|', ('pos_siparis_no', 'ilike', self), ('pos_ref_kodu', 'ilike', self)]"/>
+                    <field name="kullanici_hash" string="Kullanıcı Hash"/>
+
+                    <filter string="Subaylar" name="f_subay" domain="[('bandrol_id.statu', '=', 'subay')]"/>
+                    <filter string="Astsubaylar" name="f_astsubay" domain="[('bandrol_id.statu', '=', 'astsubay')]"/>
+                    <filter string="Generaller" name="f_general" domain="[('bandrol_id.statu', '=', 'general')]"/>
+                    <separator/>
+
+                    <filter string="Bugün" name="f_bugun" domain="[('tarih', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')), ('tarih', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                    <filter string="Dün" name="f_dun" domain="[('tarih', '&gt;=', (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d 00:00:00')), ('tarih', '&lt;=', (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d 23:59:59'))]"/>
+                    <filter string="Son 7 Gün" name="f_hafta" domain="[('tarih', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d 00:00:00'))]"/>
+                    <filter string="Son 1 Ay" name="f_ay" domain="[('tarih', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-%d 00:00:00'))]"/>
+                    <filter string="Son 6 Ay" name="f_alti_ay" domain="[('tarih', '&gt;=', (context_today() - relativedelta(months=6)).strftime('%Y-%m-%d 00:00:00'))]"/>
+                    <separator/>
+
+                    <filter string="Başarılı İşlemler" name="f_basarili" domain="[('durum', '=', 'basarili')]"/>
+                    <filter string="Hatalı İşlemler" name="f_hata" domain="[('durum', '=', 'hata')]"/>
+
+                    <group expand="0" string="Verileri Grupla">
+                        <filter string="Durumuna Göre" name="g_durum" context="{'group_by': 'durum'}"/>
+                        <filter string="Bandrol Tipine Göre" name="g_bandrol" context="{'group_by': 'bandrol_id'}"/>
+                        <filter string="İşlem Tarihine Göre (Gün)" name="g_tarih" context="{'group_by': 'tarih:day'}"/>
+                        <filter string="Paket Süresine Göre" name="g_paket" context="{'group_by': 'paket_suresi'}"/>
+                    </group>
+
+                    <searchpanel>
+                        <field name="durum" string="İşlem Durumu" icon="fa-check-circle" enable_counters="1"/>
+                        <field name="paket_suresi" string="Satın Alınan Süre" icon="fa-calendar" enable_counters="1"/>
+                        <field name="bandrol_id" string="Tanımlı Bandroller" icon="fa-tags" enable_counters="1"/>
+                    </searchpanel>
+                </search>
+            </field>
+        </record>
+
+        <!-- İşlem Geçmişi -->
+        <record id="action_orduevi_transaction" model="ir.actions.act_window">
+            <field name="name">İşlem Geçmişi</field>
+            <field name="res_model">orduevi.transaction</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smart_action">
+                    Sanal POS'tan gelen ödeme işlemleri burada listelenir.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

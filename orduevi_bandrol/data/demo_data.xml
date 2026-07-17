@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Bandrol türleri -->
+        <record id="bandrol_2026_subay" model="orduevi.bandrol">
+            <field name="bandrol_id">2026-SUBAY</field>
+            <field name="yil">2026</field>
+            <field name="statu">subay</field>
+            <field name="kapsam">kendisi</field>
+            <field name="ucret">600.0</field>
+        </record>
+        <record id="bandrol_2026_astsubay" model="orduevi.bandrol">
+            <field name="bandrol_id">2026-ASTSUBAY</field>
+            <field name="yil">2026</field>
+            <field name="statu">astsubay</field>
+            <field name="kapsam">kendisi</field>
+            <field name="ucret">300.0</field>
+        </record>
+        <record id="bandrol_2026_general" model="orduevi.bandrol">
+            <field name="bandrol_id">2026-GENERAL</field>
+            <field name="yil">2026</field>
+            <field name="statu">general</field>
+            <field name="kapsam">kendisi</field>
+            <field name="ucret">1000.0</field>
+        </record>
+
+    </data>
+</odoo>
